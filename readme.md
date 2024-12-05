@@ -56,7 +56,8 @@ The system utilizes a custom-trained AI model based on the YOLO architecture for
 ├── weapons.cfg       # Model configuration
 ├── weapon.weights    # AI model weights
 ├── alarm.mp3        # Alert sound
-└── requirements.txt  # Dependencies```
+└── requirements.txt  # Dependencies
+```
 
 ## Contributing
 1. Fork the repository

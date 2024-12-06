@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 import os
 
+
 classes = ['Weapon']
 model_weights = 'weapon.weights'
 model_cfg = 'weapons.cfg'
@@ -99,6 +100,28 @@ def process_detection(frame, output):
 def process_saved_img():
     img = cv2.imread(input('Enter image path: '))   
     process_img(img)
+
+def process_saved_video():
+    count = 0
+    video = cv2.VideoCapture(input('Enter video path: '))
+    while True:
+        ret, frame = video.read()
+        if not ret:
+            raise Exception("Error reading frame")
+        
+        if count % 30 == 0:
+            threading.Thread(target=process_img, args=(frame,)).start()
+
+        count += 1
+        with shared_lock:
+            for box, label in zip(shared_boxes, shared_labels):
+                x, y, w, h = box
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        
+        cv2.imshow('Weapon Detection', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     
 
 def play_sound():
@@ -117,10 +140,14 @@ def ring():
     is_processing = False
 
 if __name__ == '__main__':
-    cmd = int(input('Enter 1 to check live camera and 2 to load saved image: '))
+    cmd = int(input('Choose an option:\n1. Check live camera \n2. Load saved image \n3. Load saved video '))
     if cmd == 1:
         cam_runner()
     elif cmd == 2:
         process_saved_img()
+    elif cmd == 3:
+        process_saved_video()
     else:
         print('Invalid input')
+
+

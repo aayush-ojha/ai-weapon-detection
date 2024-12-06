@@ -19,7 +19,7 @@ An advanced Artificial Intelligence system designed to detect weapons in real-ti
 ## Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ai-weapon-detection.git
+git clone https://github.com/aayush-ojha/ai-weapon-detection.git
 
 # Navigate to project directory
 cd ai-weapon-detection

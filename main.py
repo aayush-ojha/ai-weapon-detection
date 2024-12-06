@@ -4,7 +4,6 @@ import numpy as np
 import pygame
 import os
 
-
 classes = ['Weapon']
 model_weights = 'weapon.weights'
 model_cfg = 'weapons.cfg'
@@ -104,12 +103,17 @@ def process_saved_img():
 def process_saved_video():
     count = 0
     video = cv2.VideoCapture(input('Enter video path: '))
+    fps = video.get(cv2.CAP_PROP_FPS)
+    if not video.isOpened():
+        raise Exception("Error opening video file")
+
+    delay = int(1000 / fps)
     while True:
         ret, frame = video.read()
         if not ret:
             raise Exception("Error reading frame")
         
-        if count % 30 == 0:
+        if count % 5 == 0:
             threading.Thread(target=process_img, args=(frame,)).start()
 
         count += 1
@@ -120,7 +124,7 @@ def process_saved_video():
                 cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
         cv2.imshow('Weapon Detection', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(delay) & 0xFF == ord('q'):
             break
     
 
@@ -149,5 +153,3 @@ if __name__ == '__main__':
         process_saved_video()
     else:
         print('Invalid input')
-
-

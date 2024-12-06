@@ -2,6 +2,7 @@ import cv2
 import threading
 import numpy as np
 import pygame
+import os
 
 classes = ['Weapon']
 model_weights = 'weapon.weights'
@@ -70,6 +71,8 @@ def process_detection(frame, output):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
             if confidence > 0.5:
+                if not os.path.exists('weapon.jpg'):
+                    cv2.imwrite('weapon.jpg', frame)
                 match = True
                 box = detection[0:4] * np.array([width, height, width, height])
                 center_x, center_y, w, h = box.astype("int")
@@ -93,12 +96,16 @@ def process_detection(frame, output):
                 shared_boxes.append(box)
                 shared_labels.append(label)
 
+def process_saved_img():
+    img = cv2.imread(input('Enter image path: '))   
+    process_img(img)
+    
 
 def play_sound():
     global is_processing 
     if not is_processing:
         threading.Thread(target=ring).start()
-     
+
 
 def ring():
     global is_processing
@@ -109,6 +116,11 @@ def ring():
         pygame.time.Clock().tick(10)
     is_processing = False
 
-
 if __name__ == '__main__':
-    cam_runner()
+    cmd = int(input('Enter 1 to check live camera and 2 to load saved image: '))
+    if cmd == 1:
+        cam_runner()
+    elif cmd == 2:
+        process_saved_img()
+    else:
+        print('Invalid input')
